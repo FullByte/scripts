@@ -20,13 +20,16 @@ Function CheckYoutubeDL{
         if(Get-Command youtube-dl) { Write-Host("Using youtube-dl version " + (Get-Command youtube-dl).Version + " from source: " + (Get-Command youtube-dl).Source) }
     }
     catch {
-        # Check if choco is installed, else download directly
+        # Check if choco is installed, else try choco, else download directly
         if ($null -ne (Get-Command -Name choco.exe -ErrorAction SilentlyContinue)) {
-            choco install -y youtube-dl 
+            choco.exe install -y youtube-dl 
+        }
+        elseif (!((&{python -V} 2>&1) -is [System.Management.Automation.ErrorRecord])) {
+            python3.exe -m pip install --upgrade youtube-dl
         }
         else {
             Write-Host "youtube-dl not found, downloading to current folder..."
-            $source = "https://youtube-dl.org/downloads/latest/youtube-dl.exe" # Source file location
+            $source = "https://yt-dl.org/latest/youtube-dl.exe" # Source file location            
             $destination = ((Get-Location).Path + "\youtube-dl.exe") # Destination to save the file
             Invoke-WebRequest -Uri $source -OutFile $destination
             Start-Process -FilePath $destination # Install
