@@ -27,9 +27,17 @@ Function CheckYoutubeDL {
             Write-Host("Installing youtube-dl with pip...")
             python3.exe -m pip install --upgrade youtube-dl
         }
-        else {            
+        else {
+            #vc_redist.x64.exe
+            $source = "https://aka.ms/vs/16/release/vc_redist.x64.exe" # Source file location            
+            Write-Host("Installing required MSVCP100.DLL from latest latest supported Visual C++ downloads from URL: " + $source)
+            $destination = ((Get-Location).Path + "\vc_redist.x64.exe") # Destination to save the file
+            Invoke-WebRequest -Uri $source -OutFile $destination
+            Start-Process -FilePath $destination 
+
+            #youtube-dl.exe
             $source = "https://yt-dl.org/latest/youtube-dl.exe" # Source file location            
-            Write-Host("Installing latest youtube-dl for URL: " + $source)
+            Write-Host("Installing latest youtube-dl from URL: " + $source)
             $destination = ((Get-Location).Path + "\youtube-dl.exe") # Destination to save the file
             Invoke-WebRequest -Uri $source -OutFile $destination
             Start-Process -FilePath $destination 
