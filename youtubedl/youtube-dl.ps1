@@ -91,7 +91,8 @@ Function GetVideo
     # Download files
     if ($null -ne ('list' | Where-Object { $s -match $_ })) {
         youtube-dl.exe -f best -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' -i "$downloadurl" }
-    else { 
+    else {
+        mkdir (((Get-Location).Path) + "\Youtube")
         youtube-dl.exe -f best -o 'Youtube/%(title)s.%(ext)s' -i "$downloadurl" }
     
     Menu # back to the menu
@@ -110,6 +111,7 @@ Function GetMusic
     if ($null -ne ('list' | Where-Object { $s -match $_ })) {
         youtube-dl.exe -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' -i --extract-audio --audio-format mp3 --audio-quality 2 "$downloadurl" }
     else { 
+        mkdir (((Get-Location).Path) + "\Singles")
         youtube-dl.exe -o 'Singles/%(title)s.%(ext)s' -i --extract-audio --audio-format mp3 --audio-quality 2 "$downloadurl" }
     
     # Rename files
