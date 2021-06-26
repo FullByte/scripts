@@ -4,13 +4,12 @@ Use youtube-dl and some helpers to get done what I need
 
 .EXAMPLE
 Run locally: .\youtube-dl.ps1
-Run online: iex ((New-Object System.Net.WebClient).DownloadString(''))
+Run online: iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/FullByte/scripts/main/youtubedl/youtube-dl.ps1'))
 
 .NOTES
 Website: https://youtube-dl.org/
+Docs: https://github.com/ytdl-org/youtube-dl/blob/master/README.md#readme
 Github: https://github.com/ytdl-org/youtube-dl
-
-ASCII art from https://textfancy.com/ascii-art/ "Black Outline"
 #>
 
 # Check if youtube-dl is available and install it if required
@@ -32,7 +31,6 @@ Function CheckYoutubeDL{
             Invoke-WebRequest -Uri $source -OutFile $destination
             Start-Process -FilePath $destination # Install
         }
-
     }
     $ErrorActionPreference=$oldPreference
 }
@@ -47,9 +45,6 @@ Function DownloadHoerbert{
 
 Function GetVideo
 {
-    # Intro  
-    Write-Host("▄▄   ▄▄ ▄▄▄ ▄▄▄▄▄▄  ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄  `n█  █ █  █   █      ██       █       █`n█  █▄█  █   █  ▄    █    ▄▄▄█   ▄   █`n█       █   █ █ █   █   █▄▄▄█  █ █  █`n█       █   █ █▄█   █    ▄▄▄█  █▄█  █`n█     ██   █       █   █▄▄▄█       █`n█▄▄▄█ █▄▄▄█▄▄▄▄▄▄██▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█`n# $now") -ForegroundColor Green
-
     # Get URL
     Write-Host("# Please enter a youtube video or playlist e.g.:")
     $downloadurl = Read-Host "# Your link"
@@ -65,11 +60,8 @@ Function GetVideo
 # Download music with youtube-dl as mp3 file
 Function GetMusic
 {
-    # Intro    
-    $now = Get-Date
-    Write-Host(" ▄▄   ▄▄ ▄▄   ▄▄ ▄▄▄▄▄▄▄ ▄▄▄ ▄▄▄▄▄▄▄ `n█  █▄█  █  █ █  █       █   █       █`n█       █  █ █  █  ▄▄▄▄▄█   █       █`n█       █  █▄█  █ █▄▄▄▄▄█   █     ▄▄█`n█       █       █▄▄▄▄▄  █   █    █   `n█ ██▄██ █       █▄▄▄▄▄█ █   █    █▄▄ `n█▄█   █▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄█▄▄▄▄▄▄▄█`n# $now") -ForegroundColor Green
-
     # Get URL
+    $now = Get-Date    
     Write-Host("# Please enter a youtube song or playlist e.g.:")
     $downloadurl = Read-Host "# Your link"
     Write-Host("# Downloading $downloadurl") -ForegroundColor Green
@@ -93,6 +85,7 @@ Function GetMusic
 }
 
 Function Menu{
+    Write-Host("# Welcome to my YouTube-DL helper :)")
     Write-Host("# What would you like to do?")
     Write-Host("# 0) Download Hörbert Tool")
     Write-Host("# 1) Download Music")
@@ -106,6 +99,5 @@ Function Menu{
 }
 
 # Start here
-Write-Host("▄     ▄ ▄▄▄▄▄▄▄ ▄▄▄     ▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄ ▄▄   ▄▄ ▄▄▄▄▄▄▄  `n█ █ ▄ █ █       █   █   █       █       █  █▄█  █       █`n█ ██ ██ █    ▄▄▄█   █   █       █   ▄   █       █    ▄▄▄█`n█       █   █▄▄▄█   █   █     ▄▄█  █ █  █       █   █▄▄▄ `n█       █    ▄▄▄█   █▄▄▄█    █  █  █▄█  █       █    ▄▄▄█`n█   ▄   █   █▄▄▄█       █    █▄▄█       █ ██▄██ █   █▄▄▄ `n█▄▄█ █▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄█   █▄█▄▄▄▄▄▄▄█`n# $now") -ForegroundColor Green
 CheckYoutubeDL
 Menu
