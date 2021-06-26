@@ -13,29 +13,29 @@ Github: https://github.com/ytdl-org/youtube-dl
 #>
 
 # Check if youtube-dl is available and install it if required
-Function CheckYoutubeDL{    
-    $oldPreference = $ErrorActionPreference
-    $ErrorActionPreference = "stop"
-    try {
-        if(Get-Command youtube-dl) { Write-Host("Using youtube-dl version " + (Get-Command youtube-dl).Version + " from source: " + (Get-Command youtube-dl).Source) }
+Function CheckYoutubeDL {
+    if ($null -ne (Get-Command -Name youtube-dl.exe -ErrorAction SilentlyContinue)) {
+        Write-Host("Using youtube-dl version " + (Get-Command youtube-dl).Version + " from source: " + (Get-Command youtube-dl).Source) 
     }
-    catch {
+    else {
         # Check if choco is installed, else try choco, else download directly
         if ($null -ne (Get-Command -Name choco.exe -ErrorAction SilentlyContinue)) {
+            Write-Host("Installing youtube-dl with chocolatey...")
             choco.exe install -y youtube-dl 
         }
-        elseif (!((&{python -V} 2>&1) -is [System.Management.Automation.ErrorRecord])) {
+        elseif ($null -ne (Get-Command -Name python3.ex -ErrorAction SilentlyContinue)) {
+            Write-Host("Installing youtube-dl with pip...")
             python3.exe -m pip install --upgrade youtube-dl
         }
-        else {
-            Write-Host "youtube-dl not found, downloading to current folder..."
+        else {            
             $source = "https://yt-dl.org/latest/youtube-dl.exe" # Source file location            
+            Write-Host("Installing latest youtube-dl for URL: " + $source)
             $destination = ((Get-Location).Path + "\youtube-dl.exe") # Destination to save the file
             Invoke-WebRequest -Uri $source -OutFile $destination
-            Start-Process -FilePath $destination # Install
+            Start-Process -FilePath $destination 
         }
+        Write-Host("Using youtube-dl version " + (Get-Command youtube-dl).Version + " from source: " + (Get-Command youtube-dl).Source)
     }
-    $ErrorActionPreference=$oldPreference
 }
 
 Function DownloadHoerbert{
@@ -44,6 +44,8 @@ Function DownloadHoerbert{
     
     Invoke-WebRequest -Uri $source -OutFile $destination #Download the file
     Start-Process -FilePath $destination
+
+    Menu
 }
 
 Function GetVideo
@@ -58,6 +60,8 @@ Function GetVideo
         youtube-dl.exe -f best -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' -i "$downloadurl" }
     else { 
         youtube-dl.exe -f best -o 'Youtube/%(title)s.%(ext)s' -i "$downloadurl" }
+    
+    Menu
 }
 
 # Download music with youtube-dl as mp3 file
@@ -85,14 +89,15 @@ Function GetMusic
     Write-Host("# All files downloaded") -ForegroundColor Green
     Get-ChildItem -File -Path * -Include *.mp3 | Select-Object Name, LastAccessTime | Where-Object -FilterScript {($_.LastAccessTime.AddMinutes(2) -gt $now)}
     Set-Location -Path -
+    Menu
 }
 
 Function Menu{
     Write-Host("# Welcome to my YouTube-DL helper :)")
     Write-Host("# What would you like to do?")
-    Write-Host("# 0) Download Hörbert Tool")
+    Write-Host("# 0) Download Hörbert")
     Write-Host("# 1) Download Music")
-    Write-Host("# 1) Download Video")
+    Write-Host("# 2) Download Video")
     Write-Host("# 9) Exit")
     $action = Read-Host "# Your input"    
     if ($action -eq "0"){ DownloadHoerbert }
