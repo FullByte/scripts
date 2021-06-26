@@ -45,7 +45,7 @@ Function DownloadHoerbert{
     Invoke-WebRequest -Uri $source -OutFile $destination #Download the file
     Start-Process -FilePath $destination
 
-    Menu
+    Menu # back to the menu
 }
 
 Function GetVideo
@@ -61,7 +61,7 @@ Function GetVideo
     else { 
         youtube-dl.exe -f best -o 'Youtube/%(title)s.%(ext)s' -i "$downloadurl" }
     
-    Menu
+    Menu # back to the menu
 }
 
 # Download music with youtube-dl as mp3 file
@@ -89,7 +89,8 @@ Function GetMusic
     Write-Host("# All files downloaded") -ForegroundColor Green
     Get-ChildItem -File -Path * -Include *.mp3 | Select-Object Name, LastAccessTime | Where-Object -FilterScript {($_.LastAccessTime.AddMinutes(2) -gt $now)}
     Set-Location -Path -
-    Menu
+
+    Menu # back to the menu
 }
 
 Function Menu{
