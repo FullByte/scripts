@@ -30,10 +30,10 @@ Function CheckYoutubeDL {
             choco.exe install -y youtube-dl 
         }
         else {
-            Write-Host("Chocolatey not found to install youtube-dl.")
-            Write-Host("What would you like to do?")
-            Write-Host("1) Install Chocolatey and youtube-dl")
-            Write-Host("2) Try other install methods")
+            Write-Host("# Chocolatey not found to install youtube-dl.")
+            Write-Host("# What would you like to do?")
+            Write-Host("# 1) Install Chocolatey and youtube-dl")
+            Write-Host("# 2) Try other install methods")
             $action = Read-Host "Your input:"    
             if ($action -eq "1"){ 
                 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -70,84 +70,136 @@ Function CheckYoutubeDL {
         Write-Host("youtube-dl installed :)")
         Write-Host("Using youtube-dl version " + (Get-Command youtube-dl).Version + " from source: " + (Get-Command youtube-dl).Source)
     }
+
+    # Check once more and return value
+    return ($null -ne (Get-Command -Name youtube-dl.exe -ErrorAction SilentlyContinue))
 }
 
 Function DownloadHoerbert{
+    # Get Variables
     $source = 'https://k2d8k6u5.rocketcdn.me/downloads/2.1.5/hoerbert-installer.exe' # Source file location
     $destination = (Get-Location).Path + '\hoerbert-installer.exe' # Destination to save the file
-    
-    Invoke-WebRequest -Uri $source -OutFile $destination #Download the file
-    Start-Process -FilePath $destination
 
+    # Download the file and run installer
+    Invoke-WebRequest -Uri $source -OutFile $destination 
+    Start-Process -FilePath $destination
     Write-Host("Follow the install instructions in the install dialog to install Hoerbert.")
     Read-Host "Press the 'any' key once done ("
-    Menu # back to the menu
+
+    # Back to the menu
+    Menu 
 }
 
-Function GetVideo
+Function GetVideo ($downloadurl)
 {
-    # Get URL
-    Write-Host("# Please enter a youtube video or playlist e.g.:")
-    $downloadurl = Read-Host "# Your link"
+    # Donwload file(s)
     Write-Host("# Downloading $downloadurl") -ForegroundColor Green
-
-    # Download files
     if ($null -ne ('list' | Where-Object { $s -match $_ })) {
         youtube-dl.exe -f best -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' -i "$downloadurl" }
     else {
-        mkdir (((Get-Location).Path) + "\Youtube")
-        youtube-dl.exe -f best -o 'Youtube/%(title)s.%(ext)s' -i "$downloadurl" }
+        $VideoPath = (((Get-Location).Path) + "\Video")
+        If (!(Test-Path -Path $VideoPath)) { New-Item -ItemType Directory -Force -Path $VideoPath }
+        youtube-dl.exe -f best -o 'Video/%(title)s.%(ext)s' -i "$downloadurl" }
     
-    Set-Location ..
-    Menu # back to the menu
+    # Reset File Path
+    Set-Location -Path $path
 }
 
 # Download music with youtube-dl as mp3 file
-Function GetMusic
+Function GetMusic ($downloadurl)
 {
-    # Get URL
+    # Donwload file(s)
     $now = Get-Date    
-    Write-Host("# Please enter a youtube song or playlist e.g.:")
-    $downloadurl = Read-Host "# Your link"
     Write-Host("# Downloading $downloadurl") -ForegroundColor Green
-    
-    # Download files
     if ($null -ne ('list' | Where-Object { $s -match $_ })) {
         youtube-dl.exe -o '%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s' -i --extract-audio --audio-format mp3 --audio-quality 2 "$downloadurl" }
     else { 
-        mkdir (((Get-Location).Path) + "\Singles")
+        $SinglesPath = (((Get-Location).Path) + "\Singles")
+        If (!(Test-Path -Path $SinglesPath)) { New-Item -ItemType Directory -Force -Path $SinglesPath }
         youtube-dl.exe -o 'Singles/%(title)s.%(ext)s' -i --extract-audio --audio-format mp3 --audio-quality 2 "$downloadurl" }
     
-    # Rename files
+    # Rename and show files
     Set-Location -Path ((Get-Location).Path + "\" + (Get-ChildItem -Directory | Sort-Object LastWriteTime | Select-Object -last 1).Name)    
     Get-ChildItem -File -Path * -Include *.mp3 | Rename-Item -NewName { ($_.BaseName -replace '[^a-zA-Z]', ' ') + '  .mp3' }
     Get-ChildItem -File -Path * -Include *.mp3 | Rename-Item -NewName { ($_.BaseName -replace '\s+', ' ') + '.mp3' }
     Get-ChildItem -File -Path * -Include *.mp3 | Rename-Item -NewName { ($_.Name -replace ' .mp3', '.mp3')}
-
-    # Show files
     Write-Host("# All files downloaded") -ForegroundColor Green
     Get-ChildItem -File -Path * -Include *.mp3 | Select-Object Name, LastAccessTime | Where-Object -FilterScript {($_.LastAccessTime.AddMinutes(2) -gt $now)}
-    Set-Location ..
 
-    Menu # back to the menu
+    # Reset File Path
+    Set-Location -Path $path
 }
 
 Function Menu{
     Set-Location -Path $path
-
-    Write-Host("# Welcome to my YouTube-DL helper :)")
     Write-Host("# What would you like to do?")
-    Write-Host("# 0) Download Hoerbert")
-    Write-Host("# 1) Download Music")
-    Write-Host("# 2) Download Video")
+    Write-Host("`e[48;2;0;0;255m# 0) Download Hoerbert")
+    Write-Host("`e[48;2;0;100;0m# 1) Download Audio")
+    Write-Host("`e[48;2;255;0;0m# 2) Download Video")
     Write-Host("# 9) Exit")
     $action = Read-Host "# Your input"    
     if ($action -eq "0"){ DownloadHoerbert }
-    elseif ($action -eq "1"){ GetMusic $playlist }
-    elseif ($action -eq "2"){ GetVideo $playlist }
+    elseif ($action -eq "1"){ # Audio
+        Write-Host(" __  __  __  __  ___  ____   ___ ")
+        Write-Host("(  \/  )(  )(  )/ __)(_  _) / __)")
+        Write-Host(" )    (  )(__)( \__ \ _)(_ ( (__ ")
+        Write-Host("(_/\/\_)(______)(___/(____) \___)")
+        Write-Host("`e[48;2;0;100;0m# Do you have a URL or local list with URLs?")
+        Write-Host("`e[48;2;0;100;0m# 1) URL")
+        Write-Host("`e[48;2;0;100;0m# 2) Local list")
+        Write-Host("`e[48;2;0;100;0m# 9) Back")
+        $action = Read-Host "`e[48;2;0;100;0m# Your input"    
+        if ($action -eq "1"){ 
+            $url = Read-Host "`e[48;2;0;100;0m# Enter URL"  
+            GetMusic $url
+            Menu
+        }
+        elseif ($action -eq "2"){
+            $AudioFilePath = Read-Host "`e[48;2;0;100;0m# Enter File Path"  
+            foreach($audio in [System.IO.File]::ReadLines($AudioFilePath)) { GetMusic $audio }
+            Menu
+        }
+        else { Menu }
+    }
+    elseif ($action -eq "2"){ # Video
+        Write-Host(" _  _  ____  ____   ____  _____ ")
+        Write-Host("( \/ )(_  _)(  _ \ ( ___)(  _  )")
+        Write-Host(" \  /  _)(_  )(_) ) )__)  )(_)( ")
+        Write-Host("  \/  (____)(____/ (____)(_____)")        
+        Write-Host("`e[48;2;255;0;0m# Do you have a URL or local list with URLs?")
+        Write-Host("`e[48;2;255;0;0m# 1) URL")
+        Write-Host("`e[48;2;255;0;0m# 2) Local list")
+        Write-Host("`e[48;2;255;0;0m# 9) Back")
+        $action = Read-Host "`e[48;2;255;0;0m# Your input"    
+        if ($action -eq "1"){ 
+            $url = Read-Host "`e[48;2;255;0;0m# Enter URL"  
+            GetVideo $url
+            Menu
+        }
+        elseif ($action -eq "2"){
+            $VideoFilePath = Read-Host "`e[48;2;255;0;0m# Enter File Path"  
+            foreach($video in [System.IO.File]::ReadLines($VideoFilePath)) { GetVideo $video }
+            Menu
+        }
+        else { Menu }
+    }
     else { Write-Host("Bye...") }
 }
 
 # Start here
-CheckYoutubeDL
-Menu
+Write-Host(" _    _  ____  __     ___  _____  __  __  ____ ")
+Write-Host("( \/\/ )( ___)(  )   / __)(  _  )(  \/  )( ___)")
+Write-Host(" )    (  )__)  )(__ ( (__  )(_)(  )    (  )__) ")
+Write-Host("(__/\__)(____)(____) \___)(_____)(_/\/\_)(____)")
+Write-Host("# Welcome to my YouTube-DL helper :)")
+if (CheckYoutubeDL) { Menu }
+else {
+    Write-Host("`e[38;2;255;0;0mCan not find or install YouTube-DL :(")
+    Write-Host("`e[38;2;255;0;0mPlease install youtube-dl manually!")
+    Write-Host("These links may help:")
+    Write-Host("-> Official Page: https://youtube-dl.org")
+    Write-Host("-> Source https://github.com/ytdl-org/youtube-dl")
+    Write-Host("-> Download https://github.com/ytdl-org/youtube-dl/release")
+    Write-Host("")
+    Read-Host "Press the 'any' key to end this script ("
+}
