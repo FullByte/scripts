@@ -12,6 +12,9 @@ Docs: https://github.com/ytdl-org/youtube-dl/blob/master/README.md#readme
 Github: https://github.com/ytdl-org/youtube-dl
 #>
 
+
+$path = (Get-Location).Path
+
 # Check if youtube-dl is available and install it if required
 Function CheckYoutubeDL {
     if ($null -ne (Get-Command -Name youtube-dl.exe -ErrorAction SilentlyContinue)) {
@@ -95,6 +98,7 @@ Function GetVideo
         mkdir (((Get-Location).Path) + "\Youtube")
         youtube-dl.exe -f best -o 'Youtube/%(title)s.%(ext)s' -i "$downloadurl" }
     
+    Set-Location ..
     Menu # back to the menu
 }
 
@@ -123,12 +127,14 @@ Function GetMusic
     # Show files
     Write-Host("# All files downloaded") -ForegroundColor Green
     Get-ChildItem -File -Path * -Include *.mp3 | Select-Object Name, LastAccessTime | Where-Object -FilterScript {($_.LastAccessTime.AddMinutes(2) -gt $now)}
-    Set-Location -Path -
+    Set-Location ..
 
     Menu # back to the menu
 }
 
 Function Menu{
+    Set-Location -Path $path
+
     Write-Host("# Welcome to my YouTube-DL helper :)")
     Write-Host("# What would you like to do?")
     Write-Host("# 0) Download Hoerbert")
