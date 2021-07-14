@@ -38,10 +38,10 @@ for roll in rolls:
         Dreifaltigkeit += 1
     else:
         if ((sortedRoll[1]-sortedRoll[0]==1) or (sortedRoll[2]-sortedRoll[1]==1)):
-            print(sortedRoll, " Unvermeidlich")
+            print(roll, " Unvermeidlich")
             Unvermeidlich += 1
         else:
-            print(sortedRoll, " Einhorn")
+            print(roll, " Einhorn")
             Einhorn += 1
 
 # Print stats
