@@ -38,7 +38,7 @@ for roll in rolls:
         Dreifaltigkeit += 1
     else:
         if ((sortedRoll[1]-sortedRoll[0]==1) or (sortedRoll[2]-sortedRoll[1]==1)):
-            print(roll, " Unvermeidlich")
+            print(roll, " Das Unvermeidliche")
             Unvermeidlich += 1
         else:
             print(roll, " Einhorn")
@@ -50,5 +50,5 @@ print("Total amount of distint rolls: ", int((math.factorial(diceFaces+diceAmoun
 
 print("\nDreifaltigkeit: ", Dreifaltigkeit, "({:.1f}".format(Dreifaltigkeit / len(rolls) * 100), "%)")
 print("Wunsch: ", Wunsch, "({:.1f}".format(Wunsch / len(rolls) * 100), "%)")
-print("Unvermeidlich: ", Unvermeidlich, "({:.1f}".format(Unvermeidlich / len(rolls) * 100), "%)")
+print("Das Unvermeidliche: ", Unvermeidlich, "({:.1f}".format(Unvermeidlich / len(rolls) * 100), "%)")
 print("Einhorn: ", Einhorn, "({:.1f}".format(Einhorn / len(rolls) * 100), "%)")
