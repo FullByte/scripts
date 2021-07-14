@@ -7,11 +7,12 @@ Run locally: .\youtube-dl.ps1
 Run online: iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/FullByte/scripts/main/youtubedl/youtube-dl.ps1'))
 
 .NOTES
-Website: https://youtube-dl.org/
-Docs: https://github.com/ytdl-org/youtube-dl/blob/master/README.md#readme
-Github: https://github.com/ytdl-org/youtube-dl
+This script: https://github.com/FullByte/scripts/blob/main/youtubedl/youtube-dl.ps1
+About youtube-dl:
+- Website: https://youtube-dl.org/
+- Docs: https://github.com/ytdl-org/youtube-dl/blob/master/README.md#readme
+- Github: https://github.com/ytdl-org/youtube-dl
 #>
-
 
 $path = (Get-Location).Path
 
