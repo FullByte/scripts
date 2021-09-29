@@ -4,7 +4,7 @@ Use youtube-dl and some helpers to get done what I need
 
 .EXAMPLE
 Run locally: .\youtube-dl.ps1
-Run online: iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/FullByte/scripts/main/youtubedl/youtube-dl.ps1'))
+Run online: iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/FullByte/scripts/main/tools/youtubedl/youtube-dl.ps1'))
 
 .NOTES
 This script: https://github.com/FullByte/scripts/blob/main/youtubedl/youtube-dl.ps1
