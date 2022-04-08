@@ -18,17 +18,17 @@ function copyImageToProd{
         [Parameter(Mandatory=$True)]
         [String]$ProdResourceGroupName,
 
-        [String]$location = 'westeurope'
+        [String]$location = 'westeurope'
     )
 
     # Preparing variables
-    $sourceImgVer = Get-AzGalleryImageVersion -GalleryImageDefinitionName $ImageDefinitionName -GalleryName $DevGalleryName -ResourceGroupName $DevResourceGroupName -Name $ImageVersionName
-    $destinationImgDef  = Get-AzGalleryImageDefinition -GalleryName $ProdGalleryName -ResourceGroupName $ProdResourceGroupName -Name $ImageDefinitionName
-    $region1 = @{Name=$location;ReplicaCount=1}
-    $targetRegions = @($region1)
+    $sourceImgVer = Get-AzGalleryImageVersion -GalleryImageDefinitionName $ImageDefinitionName -GalleryName $DevGalleryName -ResourceGroupName $DevResourceGroupName -Name $ImageVersionName
+    $destinationImgDef  = Get-AzGalleryImageDefinition -GalleryName $ProdGalleryName -ResourceGroupName $ProdResourceGroupName -Name $ImageDefinitionName
+    $region1 = @{Name=$location;ReplicaCount=1}
+    $targetRegions = @($region1)
 
     # Starting copy job
-    New-AzGalleryImageVersion -ResourceGroupName $ProdResourceGroupName -GalleryName $ProdGalleryName -GalleryImageDefinitionName $destinationImgDef.Name -GalleryImageVersionName $ImageVersionName -Location $location -TargetRegion $targetRegions -Source $sourceImgVer.Id.ToString()
+    New-AzGalleryImageVersion -ResourceGroupName $ProdResourceGroupName -GalleryName $ProdGalleryName -GalleryImageDefinitionName $destinationImgDef.Name -GalleryImageVersionName $ImageVersionName -Location $location -TargetRegion $targetRegions -Source $sourceImgVer.Id.ToString()
 }
 
 copyImageToProd '1.0.0' 'ImageDefinition' 'sig-dev' 'rg-sig-dev' 'sig-prod' 'rg-sig-prod'
