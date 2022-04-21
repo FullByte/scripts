@@ -27,5 +27,5 @@ echo 'alias navi="~/.cargo/bin/navi"' >> ~/.zshrc
 echo 'eval "\$(navi widget zsh)"' >> ~/.zshrc
 # Install own cheatsheet
 git clone "https://github.com/FullByte/navi-cheatsheet" "$(navi info cheats-path)/FullByte__navi-cheatsheet"
-(crontab -l 2>/dev/null; echo "@reboot sleep 10 && cd \"$(navi info cheats-path)/FullByte__navi-cheatsheet\" && git pull") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot sleep 22 && cd \"$(navi info cheats-path)/FullByte__navi-cheatsheet\" && git pull") | crontab -
 
