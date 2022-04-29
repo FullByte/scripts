@@ -1,0 +1,2 @@
+# Run Repair-Volume on all valid drives
+Get-Volume | Where-Object { $_.OperationalStatus -eq "OK" -and $_.DriveType -ne "CD-ROM" -and $_.FileSystemType -ne "Unknown" -and $_.DriveLetter.length -ne 0} | Foreach-Object { Write-Host("Checking Drive: " + $_.DriveLetter); Repair-Volume -DriveLetter $_.DriveLetter }
