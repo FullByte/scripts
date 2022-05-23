@@ -55,4 +55,7 @@ Function Get-InstalledApps{
         $Properties = @{ ShortcutName = $Item.Name; Target = $Shell.CreateShortcut($Item).targetpath }
         New-Object PSObject -Property $Properties
     }
+
+    # Get last 10 installed programs
+    Get-WMIObject Win32_ReliabilityRecords -computername 127.0.0.1 | Select-Object -first 10 Message | format-list *
 }
