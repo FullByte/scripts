@@ -1,0 +1,2 @@
+# Azure CLI to create a croc instance:
+az container create --resource-group rg-croc --name croc --image schollz/croc --restart-policy OnFailure --location westeurope --cpu 1 --memory 1 --ports 9009 9010 9011 9012 9013 --environment-variables CROC_PASS=password --ip-address Public --dns-name-label croc123456987
