@@ -1,0 +1,104 @@
+import bpy
+import random
+
+# Deselect all
+bpy.ops.object.select_all(action='DESELECT')
+
+# Select the default cube
+#bpy.data.objects['Cube'].select_set(True)
+
+# Delete the default cube
+#bpy.ops.object.delete()
+
+# Add a new cube
+bpy.ops.mesh.primitive_cube_add(
+    size=1, enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+
+# Rename it. 
+bpy.context.active_object.name = 'MYCUBE'
+
+
+
+
+#################################
+# Loop
+cubes = 10
+for i in range(cubes):
+    bpy.ops.mesh.primitive_cube_add(location=(0, i+i*0.2, 0), size = 1)
+    
+# Alteration
+for i in range(cubes):
+    bpy.ops.mesh.primitive_cube_add(location=(0, i+i*0.2, 0), size = 1)
+    # Make new material :
+    mat = bpy.data.materials.new("Material" + str(i))
+    # make random color diffuse :
+    mat.diffuse_color = (random.random(), random.random(), random.random(), 1)
+    # Assign material to object
+    bpy.context.object.data.materials.append(mat)
+    
+
+# Add red material to each secound red cube
+sceneCubes = []
+
+# Once populated it should look like this:
+#sceneCubes = ['Cube0', 'Cube1', 'Cube2', 'Cube3', 'Cube4', 'Cube5', 'Cube6', 'Cube7', 'Cube8', 'Cube9']
+
+
+# Create new Red Material
+REDMat = bpy.data.materials.new("RED_Material")
+REDMat.diffuse_color = (255, 0, 0, 1)
+
+
+
+
+#################################
+# Create Cubes
+for i in range(cubes):
+    bpy.ops.mesh.primitive_cube_add(location=(0, 0, i+i*0.2), size = 1)
+    bpy.context.object.name = "Cube" + str(i)
+    # Add cube reference to list
+    sceneCubes.append("Cube" + str(i))
+    
+
+# Deselect Eveything to have a clean slate  
+bpy.ops.object.select_all(action='DESELECT')
+
+
+# Select every other cube from the list
+for i in range(len(sceneCubes)):
+    if i % 2 == 0:
+        bpy.ops.object.select_pattern(pattern=sceneCubes[i])              
+
+# Define selected cubes:
+selectedCubes = bpy.context.selected_objects
+
+# Assign Material to selected cubes:
+for cube in selectedCubes:
+    cube.data.materials.append(REDMat)
+
+
+
+
+#################################
+# Create cubes in Blender and scale them according to the Fibonacci sequence
+
+fibs = [] # empty list
+# [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+fibCount = 10
+
+# Make and populate the list of Fibonacci numbers
+
+def fib(n):
+    if n <= 1:
+        return n
+    else:
+        return fib(n-1) + fib(n-2)
+
+for i in range(fibCount):
+    fibs.append(fib(i))
+
+# Create cubes according to the Fibonacci sequence
+# Location and size of the cubes  corresponed to the Fibonacci sequence
+
+for i in range(len(fibs)):    
+    bpy.ops.mesh.primitive_cube_add(location=(fibs[i], fibs[i], fibs[i]), size = fibs[i])
