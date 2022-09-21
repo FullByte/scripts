@@ -29,16 +29,27 @@ def songInfo(trackID, spotify, dbname):
 
     #TODO: Prüfen ob TrackID schon vorhanden ist
 
+    # Get release date and year
+    release_date= str(album['release_date'])
+    release_year=0
+    if (len(release_date)>=4):
+        release_year = int(release_date[0:4])
+
+    # Get duration_ms, duration_sec and duration_min
+    duration_ms = int(trackFeatures[0]['duration_ms'])
+    duration_sec = duration_ms/1000
+    duration_min = '%.3f'%(duration_sec/60)
+
     # Write Track Information to DB
     conn = sqlite3.connect(dbname)
     cursor = conn.cursor()
     cursor.execute("INSERT INTO SONGS (ID_track, ID_isrc, ID_artist, ID_album, " + # IDs
-            "song_name, song_artist, album_name, " +                        # Basics
-            "album_type, album_label, album_popularity, album_release_date, album_total_tracks, " +   # Album
+            "song_name, song_artist, album_name, " + # Basics
+            "album_type, album_label, album_popularity, album_release_date, album_release_year, album_total_tracks, " + # Album
             "artist_popularity, artist_genres, artist_followers, " + # artist
             "danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, duration_ms, " + # trackFeatures
-            "duration, end_of_fade_in, start_of_fade_out, tempo, tempo_confidence, time_signature, time_signature_confidence, key, key_confidence, mode, mode_confidence)" + # trackAnalysis
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", # not 42 :(
+            "duration_sec, duration_min, end_of_fade_in, start_of_fade_out, tempo, tempo_confidence, time_signature, time_signature_confidence, key, key_confidence, mode, mode_confidence)" + # trackAnalysis
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
         (trackID, # ID_track
         trackInfo['external_ids']['isrc'], # ID_isrc
         artistID, #ID_artist
@@ -49,7 +60,8 @@ def songInfo(trackID, spotify, dbname):
         trackInfo['album']['album_type'], #album_type
         album['label'], #album_label        
         album['popularity'], #album_popularity
-        album['release_date'], #album_release_date
+        release_date, #album_release_date
+        release_year, #album_release_year
         album['total_tracks'], #album_total_tracks 
         artist['popularity'], #artist_popularity
         "genres TODO",
@@ -62,8 +74,9 @@ def songInfo(trackID, spotify, dbname):
         trackFeatures[0]['instrumentalness'], #instrumentalness
         trackFeatures[0]['liveness'], #liveness
         trackFeatures[0]['valence'], #valence
-        trackFeatures[0]['duration_ms'], #duration_ms
-        trackAnalysis['track']['duration'], #duration
+        duration_ms, #duration_ms
+        duration_sec, #duration_sec
+        duration_min, #duration_min
         trackAnalysis['track']['end_of_fade_in'], #end_of_fade_in
         trackAnalysis['track']['start_of_fade_out'], #start_of_fade_out
         trackAnalysis['track']['tempo'], #tempo
@@ -87,43 +100,15 @@ def tracksFromPlaylist(spotify, pl_id, dbname):
 def createDB(dbname):
     conn = sqlite3.connect(dbname)
     cursor = conn.cursor()
-    table ="""CREATE TABLE SONGS(
-        ID_track VARCHAR(255),
-        ID_isrc VARCHAR(255),
-        ID_artist VARCHAR(255),
-        ID_album VARCHAR(255),
-        song_name VARCHAR(255),
-        song_artist VARCHAR(255),
-        album_name VARCHAR(255),
-        album_type VARCHAR(255),
-        album_label VARCHAR(255),
-        album_popularity VARCHAR(255),
-        album_release_date VARCHAR(255),
-        album_total_tracks VARCHAR(255),
-        artist_popularity VARCHAR(255),
-        artist_genres VARCHAR(255),
-        artist_followers VARCHAR(255),
-        danceability VARCHAR(255),
-        energy VARCHAR(255),
-        loudness VARCHAR(255),
-        speechiness VARCHAR(255),
-        acousticness VARCHAR(255),
-        instrumentalness VARCHAR(255),
-        liveness VARCHAR(255),
-        valence VARCHAR(255),
-        duration_ms VARCHAR(255),
-        duration VARCHAR(255),
-        end_of_fade_in VARCHAR(255),
-        start_of_fade_out VARCHAR(255),
-        tempo VARCHAR(255),
-        tempo_confidence VARCHAR(255),
-        time_signature VARCHAR(255),
-        time_signature_confidence VARCHAR(255),
-        key VARCHAR(255),
-        key_confidence VARCHAR(255),
-        mode VARCHAR(255),
-        mode_confidence VARCHAR(255)
-        );"""
+    table ="""CREATE TABLE IF NOT EXISTS SONGS(
+        ID_track VARCHAR(50), ID_isrc VARCHAR(50), ID_artist VARCHAR(50), ID_album VARCHAR(50),
+        song_name VARCHAR(255), song_artist VARCHAR(255), album_name VARCHAR(255), album_type VARCHAR(255), album_label VARCHAR(255),
+        album_popularity int, album_release_date int, album_release_year int, album_total_tracks int,
+        artist_popularity int, artist_genres VARCHAR(50), artist_followers int,
+        danceability int, energy int, loudness int, speechiness int, acousticness int, instrumentalness int, liveness int, valence int,
+        duration_ms int, duration_sec int, duration_min int, end_of_fade_in int, start_of_fade_out int,
+        tempo int, tempo_confidence int, time_signature int, time_signature_confidence int,
+        key int, key_confidence int, mode int, mode_confidence int);"""
     cursor.execute(table)
     conn.close()
 
