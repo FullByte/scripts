@@ -140,22 +140,25 @@ def exportJSON(dbname, exportpath):
 # Start here
 ####################
 
+def start(playlistID):
+    # File names
+    file_dir = os.path.dirname(sys.argv[0]) + "\\" + str(date.today())
+    os.makedirs(file_dir, exist_ok=True)
+    db_name= os.path.normpath(file_dir + "\\" + playlistID + '.sqlite')
+    csv_name= os.path.normpath(file_dir + "\\" + playlistID + '.csv')
+    xlsx_name= os.path.normpath(file_dir + "\\" + playlistID + '.xlsx')
+    json_name= os.path.normpath(file_dir + "\\" + playlistID + '.json')
+
+    if not (os.path.exists(db_name)):
+        createDB(db_name) # Build DB
+        tracksFromPlaylist(spotify, playlistID, db_name) # Fill DB with song details
+
+        # Export files
+        exportJSON(db_name, json_name)
+        exportExcel(db_name, xlsx_name)
+        exportCSV(db_name, csv_name)
+    else:
+        print("DB already exists")
+
 # Input
-playlistID = '37i9dQZEVXcLjbrcsHa1aK'
-
-# File names
-file_dir = os.path.dirname(sys.argv[0]) + "\\" + str(date.today())
-os.makedirs(file_dir, exist_ok=True)
-db_name= os.path.normpath(file_dir + "\\" + playlistID + '.sqlite')
-csv_name= os.path.normpath(file_dir + "\\" + playlistID + '.csv')
-xlsx_name= os.path.normpath(file_dir + "\\" + playlistID + '.xlsx')
-json_name= os.path.normpath(file_dir + "\\" + playlistID + '.json')
-
-# Build and fill DB
-if not (os.path.exists(db_name)): createDB(db_name)
-tracksFromPlaylist(spotify, playlistID, db_name)
-
-# Export files
-exportJSON(db_name, json_name)
-exportExcel(db_name, xlsx_name)
-exportCSV(db_name, csv_name)
+start('37i9dQZEVXcLjbrcsHa1aK')
