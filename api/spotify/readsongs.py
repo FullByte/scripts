@@ -1,10 +1,15 @@
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-import json
+import pandas
 import sqlite3
-from os.path import exists
+import os.path
+import sys
+from datetime import date
 
-spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+spotify = spotipy.Spotify(client_credentials_manager=spotipy.oauth2.SpotifyClientCredentials())
+
+####################
+# Get Spotify Data
+####################
 
 # TODO
 def artistTopTracks(artistID, trackID, spotify):
@@ -91,8 +96,8 @@ def songInfo(trackID, spotify, dbname):
     conn.commit()
     conn.close()
 
-def tracksFromPlaylist(spotify, pl_id, dbname):
-    response = spotify.playlist_items(pl_id, fields='items.track.id,total', additional_types=['track'])
+def tracksFromPlaylist(spotify, playlistID, dbname):
+    response = spotify.playlist_items('spotify:playlist:' + playlistID, fields='items.track.id,total', additional_types=['track'])
     if len(response['items']) != 0:
         for x in range(response['total']):
             songInfo(response['items'][x]['track']['id'],spotify, dbname)
@@ -112,21 +117,45 @@ def createDB(dbname):
     cursor.execute(table)
     conn.close()
 
-dbname='spotify.sqlite'
-pl_id = 'spotify:playlist:37i9dQZEVXcLjbrcsHa1aK'
+####################
+# EXPORT
+####################
 
-if not (exists(dbname)): createDB(dbname)
-tracksFromPlaylist(spotify, pl_id, dbname)
+def exportCSV(dbname, exportpath):
+    conn = sqlite3.connect(dbname)
+    clients = pandas.read_sql('SELECT * FROM SONGS;' ,conn)
+    clients.to_csv(exportpath, index=False)
 
+def exportExcel(dbname, exportpath):
+    conn = sqlite3.connect(dbname)
+    clients = pandas.read_sql('SELECT * FROM SONGS;' ,conn)
+    clients.to_excel(exportpath)
 
+def exportJSON(dbname, exportpath):
+    conn = sqlite3.connect(dbname)
+    clients = pandas.read_sql('SELECT * FROM SONGS;' ,conn)
+    clients.to_json(exportpath, orient="records")
 
-#EXPORT
-#import pandas
-#pandas.read_json("input.json").to_excel("output.xlsx")
-##https://pandas.pydata.org/pandas-docs/stable/reference/io.html#excel
+####################
+# Start here
+####################
 
-# Writing to sample.json
-#with open("sample.json", "w") as outfile:
-#    outfile.write(json_object)
+# Input
+playlistID = '37i9dQZEVXcLjbrcsHa1aK'
 
-# https://anthonydebarros.com/2020/09/06/generate-json-from-sql-using-python/
+# File names
+file_dir = os.path.dirname(sys.argv[0]) + "\\" + str(date.today())
+os.makedirs(file_dir, exist_ok=True)
+db_name= os.path.normpath(file_dir + "\\" + playlistID + '.sqlite')
+csv_name= os.path.normpath(file_dir + "\\" + playlistID + '.csv')
+xlsx_name= os.path.normpath(file_dir + "\\" + playlistID + '.xlsx')
+json_name= os.path.normpath(file_dir + "\\" + playlistID + '.json')
+
+# Build and fill DB
+if not (os.path.exists(db_name)): createDB(db_name)
+tracksFromPlaylist(spotify, playlistID, db_name)
+
+# Export files
+exportJSON(db_name, json_name)
+exportExcel(db_name, xlsx_name)
+exportCSV(db_name, csv_name)

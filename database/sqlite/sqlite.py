@@ -1,6 +1,6 @@
 import sqlite3
 
-dbname='test.sqlite'
+dbname='spotify.sqlite'
 
 def create(dbname):
       conn = sqlite3.connect(dbname)
@@ -21,13 +21,13 @@ def write(dbname):
 def read(dbname):
       conn = sqlite3.connect(dbname)
       cursor = conn.cursor()
-      data=cursor.execute('''SELECT * FROM STUDENT''')
+      data=cursor.execute('''SELECT * FROM SONGS''')
       for row in data:
             print(row)
       #conn.commit()
       conn.close()
 
-create(dbname)
-write(dbname)
+#create(dbname)
+#write(dbname)
 read(dbname)
 
