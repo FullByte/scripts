@@ -6,7 +6,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-#ClientCredentials = spotipy.oauth2.SpotifyOAuth(redirect_uri="http://localhost:8888/callback",cache_path='./tokens.txt')
+#ClientCredentials = spotipy.oauth2.SpotifyOAuth(redirect_uri="http://localhost/callback",cache_path='./tokens.txt')
 ClientCredentials = spotipy.oauth2.SpotifyClientCredentials()
 spotify = spotipy.Spotify(client_credentials_manager = ClientCredentials)
 
