@@ -6,13 +6,17 @@ This overview shows how the components work together:
 
 ## Prerequisits
 
+You require a [spoitfy premium](https://www.spotify.com/de/premium/) account and must register as [spoitfy developer](https://developer.spotify.com/dashboard/applications) to get an API ID + Secret.
+
 Install Python and install/upgrade the following libs using PIP:
 
 ``` py
-pip install pandas openpyxl spotipy --upgrade
+pip install -r requirements.txt --upgrade
 ```
 
 ## Environemnt Variables
+
+To test locally, set the API details recieved from your spoitfy developer as temporary environment variables:
 
 Windows
 
@@ -24,11 +28,11 @@ $Env:SPOTIPY_CLIENT_SECRET = "XXXX"
 Linux
 
 ``` bash
-export SPOTIPY_CLIENT_ID='XXXX'
-export SPOTIPY_CLIENT_SECRET='XXXX'
+export SPOTIPY_CLIENT_ID='XXX'
+export SPOTIPY_CLIENT_SECRET='XXX'
 ```
 
-## Testing
+## Dev
 
 ### Spotify
 
@@ -39,4 +43,7 @@ If you want to debug the code, here are some Spotify example IDs you can use:
 - albumID = '5Z9iiGl2FcIfa3BMiv6OIw'
 - trackID = "4cOdK2wGLETKBW3PvgPWqT"
 
-For details on the spotify api [read these docs](https://developer.spotify.com/console/).
+## Documentation
+
+- [spotify api](https://developer.spotify.com/console/)
+- [spotipy](https://spotipy.readthedocs.io)
