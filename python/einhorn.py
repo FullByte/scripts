@@ -1,4 +1,4 @@
-# Check groups for Würfel game:
+# A script that proves results and groups for the game Einhorn:
 # Step 1 create all possible options for 3x D6 dice
 # Step 2 remove doubles -> if total is 1 = Dreifaltigkeit, 2 = Wunsch
 # Step 3 with all remaining sort numbers and count min distance between all three values. If min distance is 1 = Unvermeidlich, else Einhorn
